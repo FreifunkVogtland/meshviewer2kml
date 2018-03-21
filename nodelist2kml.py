@@ -46,12 +46,23 @@ def generate_kml(nodelist):
         if 'online' not in n['status']:
             continue
 
-        if not n['status']['online']:
-            continue
+        extended = kml.ExtendedData()
 
         p = kml.Placemark(ns, n['id'], n['name'])
         p.geometry = Point(n['position']['long'], n['position']['lat'])
         d.append(p)
+
+        extended = []
+
+        if n['status']['online']:
+            status = "online"
+        else:
+            status = "offline"
+
+        extended.append(kml.Data(value=status, name='status', display_name='Status'))
+
+        p.extended_data = kml.ExtendedData(elements=extended)
+
 
     return k
 

@@ -61,6 +61,9 @@ def generate_kml(nodelist):
 
         extended.append(kml.Data(value=status, name='status', display_name='Status'))
 
+        url = 'http://vogtland.freifunk.net/map/#!v:m;n:'+n['id']
+        extended.append(kml.Data(value=url, name='url', display_name='URL'))
+
         p.extended_data = kml.ExtendedData(elements=extended)
 
 

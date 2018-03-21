@@ -13,6 +13,7 @@ from shapely.geometry import Point
 
 def dump_kml(data, filename):
     with open(filename, 'w') as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>')
         f.write(data.to_string())
         f.flush()
         os.fsync(f.fileno())

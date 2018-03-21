@@ -23,8 +23,6 @@ def generate_kml(nodelist):
     ns = '{http://www.opengis.net/kml/2.2}'
     d = kml.Document(ns)
     k.append(d)
-    f = kml.Folder(ns, 'nodes', 'Nodes', 'Freifunk Vogtland nodes')
-    d.append(f)
 
     for n in nodelist['nodes']:
         if 'position' not in n:

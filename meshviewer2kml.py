@@ -19,50 +19,47 @@ def dump_kml(data, filename):
         os.fsync(f.fileno())
 
 
-def generate_kml(nodelist):
+def generate_kml(meshviewer):
     k = kml.KML()
     ns = '{http://www.opengis.net/kml/2.2}'
     d = kml.Document(ns)
     k.append(d)
 
-    for n in nodelist['nodes']:
-        if 'position' not in n:
+    for n in meshviewer['nodes']:
+        if 'location' not in n:
             continue
 
-        if 'lat' not in n['position']:
+        if 'latitude' not in n['location']:
             continue
 
-        if 'long' not in n['position']:
+        if 'longitude' not in n['location']:
             continue
 
-        if 'name' not in n:
+        if 'hostname' not in n:
             continue
 
-        if 'id' not in n:
+        if 'node_id' not in n:
             continue
 
-        if 'status' not in n:
-            continue
-
-        if 'online' not in n['status']:
+        if 'is_online' not in n:
             continue
 
         extended = kml.ExtendedData()
 
-        p = kml.Placemark(ns, n['id'], n['name'])
-        p.geometry = Point(n['position']['long'], n['position']['lat'])
+        p = kml.Placemark(ns, n['node_id'], n['hostname'])
+        p.geometry = Point(n['location']['longitude'], n['location']['latitude'])
         d.append(p)
 
         extended = []
 
-        if n['status']['online']:
+        if n['is_online']:
             status = "online"
         else:
             status = "offline"
 
         extended.append(kml.Data(value=status, name='status', display_name='Status'))
 
-        url = 'http://vogtland.freifunk.net/map/#!v:m;n:'+n['id']
+        url = 'http://vogtland.freifunk.net/map/#!v:m;n:'+n['node_id']
         extended.append(kml.Data(value=url, name='url', display_name='URL'))
 
         p.extended_data = kml.ExtendedData(elements=extended)
@@ -73,16 +70,16 @@ def generate_kml(nodelist):
 
 def main():
     if len(sys.argv) != 3:
-        print("./nodes2kml.py NODELIST OUTKML")
+        print("./nodes2kml.py MESHVIEWERJSON OUTKML")
         sys.exit(1)
 
-    nodelistjson = sys.argv[1]
+    meshviewerjson = sys.argv[1]
     outkml = sys.argv[2]
     outkmltmp = outkml + '.tmp'
 
     # load
-    nodelist = json.load(open(nodelistjson))
-    data = generate_kml(nodelist)
+    meshviewer = json.load(open(meshviewerjson))
+    data = generate_kml(meshviewer)
 
     # store
     dump_kml(data, outkmltmp)

@@ -59,7 +59,7 @@ def generate_kml(meshviewer):
 
         extended.append(kml.Data(value=status, name='status', display_name='Status'))
 
-        url = 'http://vogtland.freifunk.net/map/#!v:m;n:'+n['node_id']
+        url = 'https://vogtland.freifunk.net/map/#!/map/'+n['node_id']
         extended.append(kml.Data(value=url, name='url', display_name='URL'))
 
         p.extended_data = kml.ExtendedData(elements=extended)

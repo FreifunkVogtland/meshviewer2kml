@@ -6,6 +6,7 @@
 import copy
 from datetime import datetime
 from fastkml import kml
+from fastkml.data import ExtendedData, Data
 import json
 import os
 import os.path
@@ -23,8 +24,7 @@ def dump_kml(data, filename):
 
 def generate_kml(meshviewer):
     k = kml.KML()
-    ns = '{http://www.opengis.net/kml/2.2}'
-    d = kml.Document(ns)
+    d = kml.Document()
     k.append(d)
 
     for n in meshviewer['nodes']:
@@ -46,10 +46,10 @@ def generate_kml(meshviewer):
         if 'is_online' not in n:
             continue
 
-        extended = kml.ExtendedData()
+        extended = ExtendedData()
 
-        p = kml.Placemark(ns, n['node_id'], n['hostname'])
-        p.geometry = Point(n['location']['longitude'], n['location']['latitude'])
+        point = Point(n['location']['longitude'], n['location']['latitude'])
+        p = kml.Placemark(id=n['node_id'], name=n['hostname'], geometry=point)
         d.append(p)
 
         extended = []
@@ -59,12 +59,12 @@ def generate_kml(meshviewer):
         else:
             status = "offline"
 
-        extended.append(kml.Data(value=status, name='status', display_name='Status'))
+        extended.append(Data(value=status, name='status', display_name='Status'))
 
         url = 'https://vogtland.freifunk.net/map/#!/map/'+n['node_id']
-        extended.append(kml.Data(value=url, name='url', display_name='URL'))
+        extended.append(Data(value=url, name='url', display_name='URL'))
 
-        p.extended_data = kml.ExtendedData(elements=extended)
+        p.extended_data = ExtendedData(elements=extended)
 
 
     return k
